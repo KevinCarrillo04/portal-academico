@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal académico</title>
+<style>
+:root {
+  --site-primary: #245b9b;
+  --site-on-primary: #ffffff;
+  --site-secondary: #e8eef5;
+  --site-on-secondary: #24364a;
+  --site-background: #f2f4f7;
+  --site-on-background: #202b38;
+  --site-font-body: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-font-heading: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --site-heading-scale: 1;
+  --site-spacing-scale: 1;
+  --site-radius-scale: 1;
+  --site-decoration-opacity: 1;
+  color-scheme: light dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--site-font-body); background: var(--site-background); color: var(--site-on-background); }
+#app { min-height: 100vh; width: 100%; background-color: light-dark(var(--site-background), #171d26); color: light-dark(var(--site-on-background), #e8edf4); border-radius: 0; }
+button { font: inherit; }
+.shell { display: flex; min-height: 100vh; }
+.sidebar { width: 224px; flex: 0 0 224px; background: light-dark(#fff, #202a36); border-right: 1px solid light-dark(#dce2e9, #344252); padding: 26px 16px; display: flex; flex-direction: column; gap: 28px; }
+.brand { display: flex; align-items: center; gap: 10px; padding: 0 10px; color: var(--site-primary); font-weight: 750; letter-spacing: .01em; }
+.brand-mark { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; color: white; background: var(--site-primary); font-weight: 800; }
+.brand small { display: block; font-size: 10px; color: #8290a0; font-weight: 600; letter-spacing: .12em; margin-top: 2px; }
+.nav { display: grid; gap: 8px; }
+.nav button { border: 0; background: transparent; color: light-dark(#566474, #c0cad6); padding: 13px 14px; text-align: left; border-radius: calc(11px * var(--site-radius-scale)); cursor: pointer; display: flex; gap: 12px; align-items: center; font-weight: 650; }
+.nav button.active, .nav button:hover { background: var(--site-secondary); color: var(--site-primary); }
+.nav-icon { width: 20px; text-align: center; font-size: 17px; }
+.side-note { margin-top: auto; font-size: 11px; line-height: 1.5; color: #8995a3; padding: 0 10px; }
+.main { min-width: 0; flex: 1; }
+.topbar { min-height: 76px; background: light-dark(#fff, #202a36); border-bottom: 1px solid light-dark(#e0e5eb, #344252); display: flex; justify-content: space-between; align-items: center; padding: 16px clamp(20px, 4vw, 46px); }
+.topbar-label { color: #8995a3; font-size: 12px; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; }
+.profile { display: flex; align-items: center; gap: 11px; }
+.avatar { width: 37px; height: 37px; border-radius: 50%; background: #dce8f5; color: var(--site-primary); display: grid; place-items: center; font-weight: 750; }
+.profile strong { display: block; font-size: 13px; }
+.profile span { display: block; color: #8995a3; font-size: 11px; margin-top: 2px; }
+.content { padding: clamp(22px, 4vw, 42px); max-width: 1440px; margin: 0 auto; }
+h1, h2, h3 { font-family: var(--site-font-heading); }
+h1 { font-size: calc(27px * var(--site-heading-scale)); margin: 0 0 7px; letter-spacing: -.035em; }
+.subtitle { color: #788696; font-size: 14px; margin: 0; }
+.welcome-row { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; margin-bottom: 28px; }
+.email-chip { margin-top: 13px; display: inline-flex; align-items: center; gap: 8px; color: #647487; font-size: 13px; background: light-dark(#fff, #263241); border: 1px solid light-dark(#e0e6ed, #3b4a5c); border-radius: 999px; padding: 8px 12px; }
+.sim-tag { font-size: 10px; letter-spacing: .04em; color: #738195; background: light-dark(#e9edf2, #303d4d); border-radius: 6px; padding: 6px 9px; white-space: nowrap; }
+.dashboard-grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(250px, 1fr); gap: 20px; }
+.card { background: light-dark(#fff, #202a36); border: 1px solid light-dark(#e0e6ed, #344252); border-radius: calc(15px * var(--site-radius-scale)); padding: calc(23px * var(--site-spacing-scale)); box-shadow: 0 4px 16px rgba(30, 50, 75, .035); }
+.card-title { margin: 0; color: #68788a; font-size: 13px; font-weight: 700; }
+.progress-card { min-height: 226px; }
+.progress-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.percent { color: var(--site-primary); font-size: 35px; font-weight: 780; letter-spacing: -.04em; margin-top: 14px; }
+.progress-track { height: 10px; background: light-dark(#e9edf2, #344252); border-radius: 20px; margin: 16px 0 13px; overflow: hidden; }
+.progress-fill { width: 75%; height: 100%; background: var(--site-primary); border-radius: inherit; }
+.progress-foot { display: flex; justify-content: space-between; color: #8491a0; font-size: 12px; }
+.stat-card { min-height: 226px; display: flex; flex-direction: column; justify-content: space-between; }
+.stat-number { font-size: 43px; letter-spacing: -.045em; font-weight: 780; color: var(--site-primary); margin-top: 18px; }
+.stat-caption { color: #8995a3; font-size: 12px; }
+.debt-card { grid-column: 1 / -1; min-height: 140px; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+.debt-label { font-weight: 720; font-size: 15px; margin-bottom: 6px; }
+.debt-sub { color: #8995a3; font-size: 12px; }
+.debt-amount { font-size: 28px; font-weight: 760; }
+.zero-pill { display: inline-block; margin-top: 8px; color: #23794e; background: #e6f4ec; padding: 5px 9px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+.section-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 22px; }
+.back-link { color: var(--site-primary); background: transparent; border: 0; cursor: pointer; font-weight: 650; padding: 7px 0; }
+.career-card { display: flex; justify-content: space-between; gap: 18px; align-items: center; margin-bottom: 22px; }
+.career-card h2 { margin: 8px 0 6px; font-size: 18px; }
+.career-card p { color: #8491a0; font-size: 12px; margin: 0; }
+.career-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.meta-chip { background: var(--site-secondary); color: var(--site-on-secondary); border-radius: 7px; padding: 6px 9px; font-size: 11px; font-weight: 650; }
+.plan-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 22px; }
+.mini-stat { background: light-dark(#fff, #202a36); border: 1px solid light-dark(#e0e6ed, #344252); border-radius: 12px; padding: 14px 16px; }
+.mini-stat strong { display: block; font-size: 20px; }
+.mini-stat span { display: block; color: #8995a3; font-size: 11px; margin-top: 3px; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; color: #778697; font-size: 11px; margin: 0 0 14px; }
+.legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.dot.approved { background: #319765; }
+.dot.current { background: #2d79c7; }
+.dot.available { background: #d99a35; }
+.terms { display: grid; gap: 10px; }
+.term { background: light-dark(#fff, #202a36); border: 1px solid light-dark(#e0e6ed, #344252); border-radius: 12px; overflow: hidden; }
+.term-toggle { width: 100%; border: 0; background: transparent; padding: 15px 17px; display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; color: inherit; text-align: left; }
+.term-main { display: flex; align-items: center; gap: 12px; }
+.term-number { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; background: var(--site-secondary); color: var(--site-primary); font-size: 12px; font-weight: 800; }
+.term-name { font-weight: 720; font-size: 13px; }
+.term-count { display: block; color: #8b97a4; font-size: 11px; font-weight: 450; margin-top: 3px; }
+.status { font-size: 10px; font-weight: 750; border-radius: 99px; padding: 6px 9px; white-space: nowrap; }
+.status.approved { color: #24764d; background: #e6f4ec; }
+.status.current { color: #2366a5; background: #e6f0fb; }
+.status.available { color: #94631b; background: #fbf0dc; }
+.chevron { color: #91a0af; font-size: 16px; transition: transform .18s; }
+.term.open .chevron { transform: rotate(180deg); }
+.course-list { display: none; border-top: 1px solid light-dark(#edf0f4, #344252); padding: 4px 17px 12px 63px; }
+.term.open .course-list { display: block; }
+.course { display: flex; justify-content: space-between; gap: 15px; padding: 10px 0; border-bottom: 1px solid light-dark(#f0f2f5, #303c4a); font-size: 12px; }
+.course:last-child { border-bottom: 0; }
+.course-code { color: #8794a2; font-weight: 700; min-width: 78px; }
+.course-name { flex: 1; }
+.course-mark { color: #8794a2; font-size: 10px; }
+.proposed-note { background: light-dark(#f8f9fb, #263241); color: #788696; border: 1px solid light-dark(#e3e8ee, #3a495a); border-radius: 10px; padding: 12px 14px; font-size: 11px; line-height: 1.5; margin-top: 16px; }
+.footer-note { color: #9aa5b1; font-size: 10px; margin-top: 24px; text-align: center; }
+@media (max-width: 760px) {
+  .sidebar { width: 66px; flex-basis: 66px; padding: 18px 8px; align-items: center; }
+  .brand { padding: 0; }
+  .brand-text, .nav-label, .side-note { display: none; }
+  .nav { width: 100%; }
+  .nav button { justify-content: center; padding: 13px 4px; }
+  .nav-icon { width: auto; }
+  .topbar { min-height: 65px; padding: 12px 16px; }
+  .content { padding: 22px 16px; }
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .debt-card { grid-column: auto; }
+  .welcome-row { flex-direction: column; }
+  .career-card { align-items: flex-start; flex-direction: column; }
+  .plan-summary { grid-template-columns: 1fr 1fr 1fr; gap: 7px; }
+  .mini-stat { padding: 11px 9px; }
+  .mini-stat strong { font-size: 17px; }
+  .mini-stat span { font-size: 10px; }
+  .course-list { padding-left: 15px; }
+  .course { flex-wrap: wrap; gap: 5px 10px; }
+}
+@media (max-width: 390px) {
+  .topbar-label { font-size: 10px; }
+  .profile span { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .status { font-size: 9px; padding: 5px 7px; }
+  .term-toggle { padding: 12px; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">UF</div><div class="brand-text">PORTAL ACADÉMICO</div></div>
+      <nav class="nav" aria-label="Navegación principal">
+        <button id="nav-home" class="active" type="button" onclick="showPage('home')"><span class="nav-icon">⌂</span><span class="nav-label">Inicio</span></button>
+        <button id="nav-enroll" type="button" onclick="showPage('enroll')"><span class="nav-icon">▤</span><span class="nav-label">Matrícula</span></button>
+      </nav>
+      <div class="side-note">Resumen académico</div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-label" id="top-label">Resumen académico</div>
+        <div class="profile"><div class="avatar">E</div><div><strong>Estudiante: Kevin Andrés Carrillo Fallas</strong><span>Correo académico registrado</span></div></div>
+      </header>
+      <section class="content" id="home-page">
+        <div class="welcome-row">
+          <div><h1>Bienvenido</h1><p class="subtitle">Este es tu resumen académico.</p><div class="email-chip">✉ &nbsp; Mi correo académico</div></div>
+          
+        </div>
+        <div class="dashboard-grid">
+          <article class="card progress-card">
+            <div class="progress-head"><div><p class="card-title">Progreso de carrera</p><div class="percent">75%</div></div><span class="meta-chip">Bachillerato</span></div>
+            <div class="progress-track"><div class="progress-fill"></div></div>
+            <div class="progress-foot"><span>9 de 12 cuatrimestres contemplados</span><span>75%</span></div>
+          </article>
+          <article class="card stat-card">
+            <div><p class="card-title">Promedio ponderado</p><div class="stat-number">86,00</div></div>
+            <div class="stat-caption">Promedio ponderado</div>
+          </article>
+          <article class="card debt-card">
+            <div><div class="debt-label">Pagaré</div><div class="debt-sub">Saldo pendiente</div><span class="zero-pill">Sin deuda registrada</span></div>
+            <div class="debt-amount">₡0,00</div>
+          </article>
+        </div>
+      </section>
+      <section class="content" id="enroll-page" hidden>
+        <div class="section-heading"><div><h1>Mi matrícula</h1><p class="subtitle">Información de carrera y plan de estudios.</p></div></div>
+        <article class="card career-card">
+          <div><p class="card-title">Carrera seleccionada</p><h2>Bachillerato en Administración de Negocios</h2><p>Plan académico</p><div class="career-meta"><span class="meta-chip">Modalidad virtual</span><span class="meta-chip">Periodo 2020</span><span class="meta-chip">12 cuatrimestres</span></div></div>
+          <div class="avatar" style="width:48px;height:48px;border-radius:13px;font-size:20px">⌂</div>
+        </article>
+        <div class="plan-summary">
+          <div class="mini-stat"><strong>86,00</strong><span>Promedio ponderado</span></div>
+          <div class="mini-stat"><strong>75%</strong><span>Avance de carrera</span></div>
+          <div class="mini-stat"><strong>12</strong><span>Cuatrimestres</span></div>
+        </div>
+        <div class="section-heading" style="margin-bottom:12px"><div><h2 style="font-size:18px;margin:0 0 5px">Plan de estudios</h2><p class="subtitle">Seleccioná un cuatrimestre para consultar sus materias.</p></div></div>
+        <div class="legend"><span class="legend-item"><i class="dot approved"></i>Aprobado</span><span class="legend-item"><i class="dot current"></i>Matriculado</span><span class="legend-item"><i class="dot available"></i>Disponible</span></div>
+        <div class="terms" id="terms"></div>
+      </section>
+    </main>
+  </div>
+</div>
+<script>
+const terms = [
+ {n:1,status:'approved',courses:[['AN-145','Inglés'],['AN-130','Introducción al Cálculo (Matemática I)'],['AN-103','Competencias en Comunicación'],['AN-102N','Fundamentos de Administración y Gerencia']]},
+ {n:2,status:'approved',courses:[['AN-370','Estadística Descriptiva'],['AN-260','Cálculo para Administración (Matemática II)'],['AN-204','Tecnología de Información Aplicada'],['AN-120','Contabilidad I']]},
+ {n:3,status:'approved',courses:[['AN-470','Estadística Inferencial'],['AN-404','Gestión y Planificación del Recurso Humano'],['AN-230','Matemática Financiera e Ingeniería Económica'],['AN-220','Contabilidad II']]},
+ {n:4,status:'approved',courses:[['AN-405','Fundamentos de Administración de Proyectos'],['AN-401','Derecho Tributario y Mercantil'],['AN-365','Microeconomía'],['AN-320','Contabilidad y Control de Costos I'],['AN-304','Principios y Técnicas de Investigación']]},
+ {n:5,status:'approved',courses:[['AN-660','Macroeconomía'],['AN-590','Derecho Laboral'],['AN-505','Sociedad e Información'],['AN-504','Mercadotecnia'],['AN-330','Finanzas I']]},
+ {n:6,status:'approved',courses:[['AN-750','Administración de la Producción'],['AN-604','Estrategias de Mercado Digital y Redes Sociales'],['AN-603','Negocios Internacionales'],['AN-430','Finanzas II']]},
+ {n:7,status:'approved',courses:[['ELEC-011','Electiva I'],['AN-704','Diseño de Canales de Distribución y Ventas'],['AN-702','Derecho Civil y Calidad de Vida de Recursos Humanos'],['AN-701','Emprendedurismo']]},
+ {n:8,status:'approved',courses:[['ELEC-02','Electiva II'],['AN-802','Ética y Desarrollo Sustentable en las Organizaciones'],['AN-801','Enfoques Administrativos Contemporáneos'],['AN-804','Estrategia e Innovación en los Modelos de Negocios']]},
+ {n:9,status:'current',courses:[['AN-901','Derecho Laboral II'],['AN-902','Macroeconomía II'],['AN-903','Gestión del Conocimiento y Transformación Digital'],['AN-904','Finanzas Corporativas']]},
+ {n:10,status:'available',proposed:true,courses:[['AN-1001','Dirección Estratégica'],['AN-1002','Mercadotecnia Estratégica'],['AN-1003','Gestión Avanzada de Proyectos'],['AN-1004','Negocios Internacionales II']]},
+ {n:11,status:'available',proposed:true,courses:[['AN-1101','Dirección y Liderazgo Empresarial'],['AN-1102','Gestión del Talento Humano II'],['AN-1103','Transformación Digital en las Organizaciones'],['AN-1104','Finanzas Internacionales']]},
+ {n:12,status:'available',proposed:true,courses:[['AN-1201','Formulación y Evaluación de Proyectos'],['AN-1202','Seminario de Graduación'],['AN-1203','Estrategia Empresarial'],['AN-1204','Práctica Profesional Supervisada']]}
+];
+const statusText = {approved:'Aprobado',current:'Matriculado',available:'Disponible'};
+const termsRoot = document.getElementById('terms');
+terms.forEach((term, index) => {
+  const el = document.createElement('article');
+  el.className = 'term' + (term.n === 9 ? ' open' : '');
+  const courses = term.courses.map(c => `<div class="course"><span class="course-code">${c[0]}</span><span class="course-name">${c[1]}</span>${term.proposed ? '<span class="course-mark">Propuesta</span>' : ''}</div>`).join('');
+  el.innerHTML = `<button class="term-toggle" type="button" aria-expanded="${term.n===9?'true':'false'}"><span class="term-main"><span class="term-number">${term.n}º</span><span><span class="term-name">${term.n}º cuatrimestre</span><span class="term-count">${term.courses.length} materias${term.proposed?' · cursos propuestos':''}</span></span></span><span style="display:flex;align-items:center;gap:10px"><span class="status ${term.status}">${statusText[term.status]}</span><span class="chevron">⌄</span></span></button><div class="course-list">${courses}</div>`;
+  el.querySelector('.term-toggle').addEventListener('click', () => {
+    el.classList.toggle('open');
+    el.querySelector('.term-toggle').setAttribute('aria-expanded', el.classList.contains('open') ? 'true' : 'false');
+  });
+  termsRoot.appendChild(el);
+});
+function showPage(page) {
+  const home = page === 'home';
+  document.getElementById('home-page').hidden = !home;
+  document.getElementById('enroll-page').hidden = home;
+  document.getElementById('nav-home').classList.toggle('active', home);
+  document.getElementById('nav-enroll').classList.toggle('active', !home);
+  document.getElementById('top-label').textContent = home ? 'Resumen académico' : 'Matrícula';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
